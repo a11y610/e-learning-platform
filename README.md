@@ -2,7 +2,7 @@
 A full-stack E-Learning Platform built using React, Node.js, Express, MongoDB, and JWT authentication, featuring course browsing, enrollment, progress tracking, admin controls, and cloud deployment.
 
 🚀 Live Demo
-Frontend (Vercel): https://your-frontend-url.vercel.app
+Frontend (Vercel): https://e-learning-platform-three.vercel.app/
 Backend (Render): https://your-backend-url.onrender.com
 
 🧠 Project Purpose
