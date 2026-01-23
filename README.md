@@ -3,7 +3,6 @@ A full-stack E-Learning Platform built using React, Node.js, Express, MongoDB, a
 
 🚀 Live Demo
 Frontend (Vercel): https://e-learning-platform-three.vercel.app/
-Backend (Render): https://your-backend-url.onrender.com
 
 🧠 Project Purpose
 This project simulates a real-world e-learning system, demonstrating:
