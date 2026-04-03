@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 export default function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +27,7 @@ export default function Signup() {
     try {
       const res = await api.post("/auth/signup", form);
       localStorage.setItem("token", res.data.token);
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
     } finally {

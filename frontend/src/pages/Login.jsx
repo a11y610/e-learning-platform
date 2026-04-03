@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,8 +14,7 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
-      alert("Login successful");
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
