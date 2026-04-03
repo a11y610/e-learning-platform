@@ -56,6 +56,30 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // Update streak
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const lastLogin = user.lastLoginDate ? new Date(user.lastLoginDate) : null;
+    lastLogin?.setHours(0, 0, 0, 0);
+
+    if (!lastLogin || lastLogin.getTime() !== today.getTime()) {
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const lastLoginWasYesterday = lastLogin && lastLogin.getTime() === yesterday.getTime();
+
+      if (lastLoginWasYesterday) {
+        user.streak += 1;
+      } else if (!lastLogin) {
+        user.streak = 1;
+      } else {
+        user.streak = 1;
+      }
+
+      user.lastLoginDate = today;
+      user.loginDates.push(today);
+      await user.save();
+    }
+
     res.json({
       message: "Login successful",
       token: generateToken(user._id)

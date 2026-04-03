@@ -33,7 +33,21 @@ const userSchema = new mongoose.Schema(
     resetTokenExpiry: {
       type: Date,
       default: null
-    }
+    },
+    streak: {
+      type: Number,
+      default: 0
+    },
+    lastLoginDate: {
+      type: Date,
+      default: null
+    },
+    loginDates: [
+      {
+        type: Date,
+        default: null
+      }
+    ]
   },
   {
     timestamps: true
