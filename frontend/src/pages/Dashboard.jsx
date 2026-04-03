@@ -39,7 +39,7 @@ export default function Dashboard() {
                 href="/courses"
                 className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
               >
-                Browse Courses
+                Explore Courses
               </a>
             </div>
           ) : (

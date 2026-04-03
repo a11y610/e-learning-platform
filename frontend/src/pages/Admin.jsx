@@ -14,7 +14,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
 
   const fetchCourses = () => {
-    api.get("/auth/courses").then((res) => setCourses(res.data));
+    api.get("/courses").then((res) => setCourses(res.data));
   };
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function Admin() {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/auth/courses", form);
+      await api.post("/courses", form);
       alert("Course created successfully!");
       setForm({
         title: "",
@@ -51,7 +51,7 @@ export default function Admin() {
     if (!window.confirm("Are you sure you want to delete this course?")) return;
 
     try {
-      await api.delete(`/auth/courses/${id}`);
+      await api.delete(`/courses/${id}`);
       alert("Course deleted successfully!");
       fetchCourses();
     } catch (err) {
