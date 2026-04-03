@@ -1,11 +1,27 @@
 const nodemailer = require("nodemailer");
 
+// Validate required email environment variables
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+
+if (!EMAIL_USER || EMAIL_USER === "your-email@gmail.com") {
+  console.warn(
+    "⚠️  EMAIL_USER is not configured. Set a real Gmail address in backend/.env"
+  );
+}
+if (!EMAIL_PASSWORD || EMAIL_PASSWORD === "your-app-specific-password") {
+  console.warn(
+    "⚠️  EMAIL_PASSWORD is not configured. Set a Gmail App Password in backend/.env\n" +
+    "   To generate one: Google Account → Security → 2-Step Verification → App passwords"
+  );
+}
+
 // Configure Gmail SMTP
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
+    user: EMAIL_USER,
+    pass: EMAIL_PASSWORD,
   },
 });
 
@@ -65,9 +81,19 @@ const sendOTPEmail = async (email, otp, userName) => {
     return { success: true, message: "OTP sent successfully" };
   } catch (error) {
     console.error("Email sending error:", error);
+
+    let friendlyMessage = "Failed to send OTP email, please try again";
+    if (error.code === "EAUTH" || error.responseCode === 535) {
+      friendlyMessage =
+        "Email authentication failed. Ensure EMAIL_USER and EMAIL_PASSWORD " +
+        "(Gmail App Password) are correctly set in backend/.env";
+    } else if (error.code === "ECONNREFUSED" || error.code === "ETIMEDOUT") {
+      friendlyMessage = "Could not connect to email server. Check your network connection.";
+    }
+
     return {
       success: false,
-      message: "Failed to send OTP email, please try again",
+      message: friendlyMessage,
       error: error.message,
     };
   }
