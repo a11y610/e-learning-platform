@@ -20,53 +20,73 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg px-8 py-4 flex justify-between items-center sticky top-0 z-50">
-      {/* Logo */}
-      <Link to="/" className="text-2xl font-extrabold text-white hover:text-blue-100 transition">
-        📚 E-Learning
-      </Link>
+    <nav className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-2xl font-bold text-primary hover:text-secondary transition"
+        >
+          <span className="text-3xl">📚</span>
+          <span>E-Learning</span>
+        </Link>
 
-      {/* Actions */}
-      <div className="flex items-center space-x-4">
-        {!token ? (
-          <>
-            <Link
-              to="/login"
-              className="text-white hover:text-blue-100 font-medium transition"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition"
-            >
-              Signup
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link
-              to="/dashboard"
-              className="text-white hover:text-blue-100 font-medium transition"
-            >
-              Dashboard
-            </Link>
-            {user?.role === "admin" && (
+        {/* Navigation */}
+        <div className="flex items-center gap-6">
+          {!token ? (
+            <>
               <Link
-                to="/admin"
-                className="text-white hover:text-blue-100 font-medium transition bg-red-500 px-3 py-1 rounded-lg hover:bg-red-600"
+                to="/login"
+                className="text-primary hover:text-secondary font-medium transition"
               >
-                Admin Panel
+                Login
               </Link>
-            )}
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition font-medium"
-            >
-              Logout
-            </button>
-          </>
-        )}
+              <Link
+                to="/signup"
+                className="btn btn-primary text-sm"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/"
+                className="text-primary hover:text-secondary font-medium transition hidden sm:inline-block"
+              >
+                Explore
+              </Link>
+              <Link
+                to="/dashboard"
+                className="text-primary hover:text-secondary font-medium transition hidden sm:inline-block"
+              >
+                Dashboard
+              </Link>
+
+              {user?.role === "admin" && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-warning text-white rounded-base font-semibold hover:bg-orange-600 transition"
+                >
+                  ⚙️ Admin Panel
+                </Link>
+              )}
+
+              {/* User Menu */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-text-light hidden sm:inline">
+                  {user?.name}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-danger text-sm"
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );

@@ -3,7 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 export default function Signup() {
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -36,69 +41,110 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md w-96"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center">Create Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-secondary-light/10 px-4">
+      <div className="form-container max-w-md w-full">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="text-5xl mb-4">🚀</div>
+          <h1 className="text-3xl font-bold text-primary mb-2">Get Started</h1>
+          <p className="text-text-light">Create your account to begin learning</p>
+        </div>
 
+        {/* Error Alert */}
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">
-            {error}
+          <div className="form-error animate-slideIn mb-6">
+            <div className="flex items-start gap-2">
+              <span className="text-xl">⚠️</span>
+              <span>{error}</span>
+            </div>
           </div>
         )}
 
-        <input
-          className="w-full p-2 mb-3 border rounded"
-          placeholder="Full Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-        />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
+            <input
+              type="text"
+              placeholder="John Doe"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+              className="w-full"
+            />
+          </div>
 
-        <input
-          type="email"
-          className="w-full p-2 mb-3 border rounded"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-        />
+          {/* Email */}
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+              className="w-full"
+            />
+          </div>
 
-        <input
-          type="password"
-          className="w-full p-2 mb-3 border rounded"
-          placeholder="Password (min 6 characters)"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+          {/* Password */}
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+              className="w-full"
+            />
+            <p className="text-xs text-text-light mt-1">Minimum 6 characters</p>
+          </div>
 
-        <input
-          type="password"
-          className="w-full p-2 mb-4 border rounded"
-          placeholder="Confirm Password"
-          value={form.confirmPassword}
-          onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-          required
-        />
+          {/* Confirm Password */}
+          <div className="form-group">
+            <label className="form-label">Confirm Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={form.confirmPassword}
+              onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+              required
+              className="w-full"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
-        >
-          {loading ? "Creating Account..." : "Sign Up"}
-        </button>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary w-full mt-6"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="spinner" style={{ width: "16px", height: "16px" }}></span>
+                Creating Account...
+              </span>
+            ) : (
+              "Create Account"
+            )}
+          </button>
+        </form>
 
-        <p className="text-center text-sm mt-4">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        </p>
-      </form>
+        {/* Sign In Link */}
+        <div className="mt-8 pt-6 border-t border-neutral-200 text-center">
+          <p className="text-text-light text-sm">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-secondary font-semibold hover:text-secondary-dark"
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
