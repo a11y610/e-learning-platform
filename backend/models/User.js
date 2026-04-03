@@ -34,6 +34,22 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    otp: {
+      type: String,
+      default: null
+    },
+    otpExpiry: {
+      type: Date,
+      default: null
+    },
+    verificationToken: {
+      type: String,
+      default: null
+    },
+    verificationTokenExpiry: {
+      type: Date,
+      default: null
+    },
     streak: {
       type: Number,
       default: 0

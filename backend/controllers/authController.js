@@ -2,12 +2,23 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { sendOTPEmail } = require("../services/emailService");
 
 // Generate JWT
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d"
   });
+};
+
+// Generate 8-character alphanumeric OTP
+const generateOTP = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let otp = "";
+  for (let i = 0; i < 8; i++) {
+    otp += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return otp;
 };
 
 // @route POST /api/auth/signup
@@ -103,18 +114,77 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Generate reset token
+    // Generate reset token (32 bytes)
     const resetToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-    // Set token and expiry (10 minutes)
+    // Generate 8-character OTP
+    const otp = generateOTP();
+
+    // Store token and OTP with expiries
     user.resetToken = hashedToken;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
+    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    // Send OTP via email
+    const emailResult = await sendOTPEmail(email, otp, user.name);
+
+    if (!emailResult.success) {
+      // Clear OTP if email fails
+      user.otp = null;
+      user.otpExpiry = null;
+      await user.save();
+      return res.status(500).json({ message: emailResult.message || "Failed to send OTP" });
+    }
+
+    res.json({
+      message: "OTP sent to your email",
+      expiresIn: 15 * 60 // 15 minutes in seconds
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @route POST /api/auth/verify-otp
+exports.verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Check if OTP matches and hasn't expired
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (!user.otpExpiry || user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+
+    // Generate temporary verification token (5 minutes)
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const hashedVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
+
+    user.verificationToken = hashedVerificationToken;
+    user.verificationTokenExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+    user.otp = null; // Clear OTP after successful verification
+    user.otpExpiry = null;
     await user.save();
 
     res.json({
-      message: "Password reset token generated",
-      token: resetToken
+      message: "OTP verified successfully",
+      verificationToken: verificationToken,
+      expiresIn: 5 * 60 // 5 minutes in seconds
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
