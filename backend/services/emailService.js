@@ -4,28 +4,26 @@ const nodemailer = require("nodemailer");
 const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
-const PLACEHOLDER_USER = "your-email@gmail.com";
+const PLACEHOLDER_USER = "your-gmail-address@gmail.com";
 const PLACEHOLDER_PASS = "your-app-specific-password";
 
-const credentialsMissing =
-  !EMAIL_USER ||
-  EMAIL_USER === PLACEHOLDER_USER ||
-  !EMAIL_PASSWORD ||
-  EMAIL_PASSWORD === PLACEHOLDER_PASS;
+const userMissing = !EMAIL_USER || EMAIL_USER === PLACEHOLDER_USER;
+const passMissing = !EMAIL_PASSWORD || EMAIL_PASSWORD === PLACEHOLDER_PASS;
+const credentialsMissing = userMissing || passMissing;
 
-if (!EMAIL_USER || EMAIL_USER === PLACEHOLDER_USER) {
+if (userMissing) {
   console.warn(
     "⚠️  EMAIL_USER is not configured. Set a real Gmail address in backend/.env"
   );
 }
-if (!EMAIL_PASSWORD || EMAIL_PASSWORD === PLACEHOLDER_PASS) {
+if (passMissing) {
   console.warn(
     "⚠️  EMAIL_PASSWORD is not configured. Set a Gmail App Password in backend/.env\n" +
     "   To generate one: Google Account → Security → 2-Step Verification → App passwords"
   );
 }
 
-// Configure Gmail SMTP transporter (created lazily when credentials are present)
+// Configure Gmail SMTP transporter (created only when credentials are present)
 let transporter = null;
 if (!credentialsMissing) {
   transporter = nodemailer.createTransport({
