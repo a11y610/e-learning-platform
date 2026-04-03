@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://e-learning-platform-k1kg.onrender.com/"
+  baseURL: "https://e-learning-platform-k1kg.onrender.com/api"
 });
 
 // Attach JWT automatically
